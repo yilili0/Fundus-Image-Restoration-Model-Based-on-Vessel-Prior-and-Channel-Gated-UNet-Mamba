@@ -28,8 +28,8 @@ model:
 
   teacher:
     enable: true
-    model_py: /shared_data/users/yili/Hybrid-Mamba-UNet/notebook_exact_project/model.py
-    ckpt: /shared_data/users/yili/Hybrid-Mamba-UNet/notebook_exact_project/files/checkpoint.pth
+    model_py: /shared_data/users/yili/Hybrid-Mamba-UNet/Teacher_model/model.py
+    ckpt: /shared_data/users/yili/Hybrid-Mamba-UNet/Teacher_model/files/checkpoint.pth
     in_channels: 3
     out_channels: 1
 
