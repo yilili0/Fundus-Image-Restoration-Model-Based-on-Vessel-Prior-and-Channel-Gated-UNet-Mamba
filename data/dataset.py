@@ -520,12 +520,12 @@ def demo_loader(dataset: IterableDataset, batch_size: int = 8, num_workers: int 
 # ----------------------------
 def main():
     # ===============================
-    # ✅ 只改这里：你的硬编码配置
+    # 硬编码配置
     # ===============================
     DATA_ROOT = "C:\\Users\\29638\\Desktop\\Real_Fundus\\Real_Fundus"  # 需要包含: DATA_ROOT/input 和 DATA_ROOT/gt
     OUT_DIR = "C:\\Users\\29638\\Desktop\\Real_Fundus\\Real_Fundus"
 
-    # split 比例（专家建议：100/20 = 0.1667）
+    # split 比例
     VAL_RATIO = 20 / 120
     SPLIT_SEED = 1234
 
@@ -534,7 +534,7 @@ def main():
     BLACK_THR = 10
     BLACK_RATIO_MAX = 0.40
     MAX_TRIES = 10
-    FORCE_RESIZE_TO_2560 = False  # 若你的图不是严格2560*2560，可开 True（input/gt 都会 resize）
+    FORCE_RESIZE_TO_2560 = False  # 若图不是严格2560*2560，可开 True（input/gt 都会 resize）
 
     # train loader
     TRAIN_SEED = 1234
@@ -552,9 +552,7 @@ def main():
     RUN_TEST_VIS10 = False
     RUN_TEST_DEMO = False
 
-    # ===============================
-    # ✅ 不用改下面
-    # ===============================
+ 
     os.makedirs(OUT_DIR, exist_ok=True)
     split_dir = os.path.join(OUT_DIR, "splits")
     train_txt, val_txt = make_train_val_split(
@@ -630,10 +628,6 @@ def main():
     if RUN_TEST_DEMO:
         demo_loader(train_ds, batch_size=TRAIN_BATCH_SIZE, num_workers=TRAIN_NUM_WORKERS, steps=3)
 
-    # 如果你只是把这个文件作为“模块”import 给训练脚本用，
-    # 训练脚本里直接用 train_loader / val_loader 的构建方式即可。
-    #
-    # 这里给一个最小提示（不真的训练）：
     print("[Ready] Data pipeline OK. Use train_loader/val_loader in your training script.")
 
 
