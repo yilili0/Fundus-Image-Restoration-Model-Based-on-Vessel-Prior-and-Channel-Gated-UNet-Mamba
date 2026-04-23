@@ -1,10 +1,4 @@
-# predict_one.py
-# Single-image inference: load checkpoint -> eval() -> freeze grads -> output binary vessel mask
-#
-# Example:
-#   python predict_one.py --config config.yml --image /path/to/fundus.png --out outputs/mask.png
-#
-# Acceptance: Given one fundus image, outputs a binarized vessel segmentation mask image.
+
 
 from __future__ import annotations
 
