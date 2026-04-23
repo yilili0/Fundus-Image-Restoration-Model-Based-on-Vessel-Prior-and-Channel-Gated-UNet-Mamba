@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 # ----------------------------
-# U-Net blocks (same as notebook)
+# U-Net blocks
 # ----------------------------
 class conv_block(nn.Module):
     def __init__(self, in_c: int, out_c: int):
@@ -96,7 +96,7 @@ class build_unet(nn.Module):
 
 
 # ----------------------------
-# Losses (same as notebook)
+# Losses 
 # ----------------------------
 class DiceLoss(nn.Module):
     def __init__(self, weight=None, size_average=True):
