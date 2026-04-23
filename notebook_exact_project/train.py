@@ -132,8 +132,7 @@ def main(cfg_path: str = "config.yml"):
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    # Notebook creates a ReduceLROnPlateau scheduler but does not step it in the loop.
-    # To keep the original behavior, we create it and leave it unused by default.
+    
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, "min", patience=int(cfg["train"].get("lr_patience", 5)), verbose=True
     )
