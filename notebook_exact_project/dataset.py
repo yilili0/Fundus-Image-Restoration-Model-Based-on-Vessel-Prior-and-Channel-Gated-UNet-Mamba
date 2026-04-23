@@ -39,17 +39,7 @@ def _crop(img: np.ndarray, crop_h: int, crop_w: int, y: int, x: int) -> np.ndarr
 
 
 class DriveDataset(Dataset):
-    """
-    Dataset aligned with the notebook's logic (simple read -> normalize -> tensor),
-    with ONE change to support raw 565x584 data while keeping 512x512 training:
-
-    - Instead of resizing (which changes vessel scale), we do **pad + crop** to 512x512:
-        1) Symmetric pad (only if needed) to ensure at least 512x512.
-        2) Crop to exactly 512x512 (center-crop by default; optional random crop).
-
-    This preserves local structures better than resize and is closer to the common
-    preprocessing used in many vessel-seg notebooks that assume 512x512 inputs.
-    """
+  
 
     def __init__(
             self,
