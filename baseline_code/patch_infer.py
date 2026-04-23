@@ -228,7 +228,7 @@ def load_ckpt_to_model(model: nn.Module, ckpt_path: str, use_ema: bool = True) -
         elif "state_dict" in ckpt:
             sd = ckpt["state_dict"]
         else:
-            # 有些人直接 torch.save(model.state_dict())
+        
             # 或者 dict 里只有一堆权重键
             maybe_weight_keys = [k for k in ckpt.keys() if isinstance(ckpt[k], torch.Tensor)]
             if len(maybe_weight_keys) > 10:
@@ -256,7 +256,7 @@ def main():
     parser.add_argument("--start", type=int, default=0, help="start index after sorting")
     parser.add_argument("--shuffle", type=int, default=0, help="1: shuffle before picking")
 
-    # 推理设置（给你做了相对安全的默认）
+    # 推理设置
     parser.add_argument("--use_amp", type=int, default=1)
     parser.add_argument("--pad_to", type=int, default=16, help="pad H/W to multiple for U-Net-like nets")
     parser.add_argument("--tile", type=int, default=1024, help="0 = no tiling; otherwise tile size")
