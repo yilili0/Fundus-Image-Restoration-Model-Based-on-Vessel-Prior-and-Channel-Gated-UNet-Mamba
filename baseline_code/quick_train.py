@@ -3,7 +3,7 @@ import os
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
-os.environ["cv2_NUM_THREADS"] = "0"  # 如果代码里用到了 OpenCV，彻底关掉它的多线程
+os.environ["cv2_NUM_THREADS"] = "0"  # 如果代码里用到了 OpenCV，关掉它的多线程
 import time
 import copy
 import signal
@@ -15,7 +15,7 @@ from torch.utils.data import DataLoader
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import CosineAnnealingLR
 
-# 导入你写好的模型和数据流
+
 from models.model import MambaRealSR11
 from data.dataset import (
     PipelineConfig,
@@ -30,7 +30,6 @@ from data.dataset import (
 # =========================================================================
 class SafeLogger(object):
     """
-    双向实时日志器：同时向控制台和本地文件输出，并完美伪装成系统终端。
     """
 
     def __init__(self, filename):
@@ -117,10 +116,10 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     print("=" * 60)
-    print(f"🚀 [Init] 正式训练任务启动")
-    print(f"📁 [Init] 输出目录: {OUT_DIR}")
+    print(f" [Init] 正式训练任务启动")
+    print(f" [Init] 输出目录: {OUT_DIR}")
     print(
-        f"🖥️  [Init] 运算设备: {device} | 显卡: {torch.cuda.get_device_name(device) if torch.cuda.is_available() else 'N/A'}")
+        f"  [Init] 运算设备: {device} | 显卡: {torch.cuda.get_device_name(device) if torch.cuda.is_available() else 'N/A'}")
     print("=" * 60)
 
     # -----------------------------
@@ -167,11 +166,11 @@ def main():
     scheduler = CosineAnnealingLR(optimizer, T_max=EPOCHS, eta_min=1e-6)
 
     # -----------------------------
-    # 【新增】断点续训加载逻辑
+    # 断点续训加载逻辑
     # -----------------------------
     start_epoch = 0
     if RESUME_CKPT is not None and os.path.isfile(RESUME_CKPT):
-        print(f"🔄 [Resume] 发现断点文件，正在加载: {RESUME_CKPT}")
+        print(f" [Resume] 发现断点文件，正在加载: {RESUME_CKPT}")
         checkpoint = torch.load(RESUME_CKPT, map_location=device)
 
         # 恢复状态
@@ -181,9 +180,9 @@ def main():
         optimizer.load_state_dict(checkpoint['optimizer_state'])
         scheduler.load_state_dict(checkpoint['scheduler_state'])
 
-        print(f"✅ [Resume] 成功恢复到 Epoch {start_epoch}，将从 Epoch {start_epoch + 1} 继续训练。")
+        print(f" [Resume] 成功恢复到 Epoch {start_epoch}，将从 Epoch {start_epoch + 1} 继续训练。")
     elif RESUME_CKPT is not None:
-        print(f"⚠️ [Resume] 未找到断点文件 {RESUME_CKPT}，将从头开始训练。")
+        print(f" [Resume] 未找到断点文件 {RESUME_CKPT}，将从头开始训练。")
     # -----------------------------
     # 存档辅助函数
     # -----------------------------
@@ -197,7 +196,7 @@ def main():
         }
         if is_emergency:
             path = os.path.join(CKPT_DIR, "emergency_save.pth")
-            print(f"\n⚠️ [Emergency] 紧急保存模型至: {path}")
+            print(f"\n [Emergency] 紧急保存模型至: {path}")
         elif is_best:
             path = os.path.join(CKPT_DIR, "best_model.pth")
         else:
@@ -214,7 +213,7 @@ def main():
 
     def signal_handler(sig, frame):
         nonlocal graceful_stop
-        print("\n⚠️ [Emergency] 接收到中断信号！将在当前 Iteration 结束后安全退出并保存...")
+        print("\n [Emergency] 接收到中断信号！将在当前 Iteration 结束后安全退出并保存...")
         graceful_stop = True
 
     signal.signal(signal.SIGINT, signal_handler)
@@ -233,7 +232,7 @@ def main():
             start_time = time.time()
 
             print(f"\n" + "-" * 60)
-            print(f"🔥 [Epoch {current_epoch}/{EPOCHS}] | LR: {scheduler.get_last_lr()[0]:.2e}")
+            print(f" [Epoch {current_epoch}/{EPOCHS}] | LR: {scheduler.get_last_lr()[0]:.2e}")
 
             for i in range(ITERS_PER_EPOCH):
                 if graceful_stop:
@@ -281,13 +280,13 @@ def main():
                           f"GPU Mem: {mem_info}")
 
             if graceful_stop:
-                print("🛑 正在执行紧急保存机制...")
+                print(" 正在执行紧急保存机制...")
                 save_checkpoint(current_epoch, is_emergency=True)
                 break
 
             scheduler.step()
             print(
-                f"✅ [Epoch {current_epoch} 总结] 耗时: {time.time() - start_time:.2f}s | Avg Loss: {epoch_loss / ITERS_PER_EPOCH:.5f}")
+                f" [Epoch {current_epoch} 总结] 耗时: {time.time() - start_time:.2f}s | Avg Loss: {epoch_loss / ITERS_PER_EPOCH:.5f}")
 
             # -----------------------------
             # 验证循环 (使用 EMA)
@@ -306,32 +305,32 @@ def main():
                     val_steps += 1
 
             avg_val_psnr = val_psnr / val_steps
-            print(f"🌟 [验证集评估] EMA Val PSNR: {avg_val_psnr:.2f} dB")
+            print(f" [验证集评估] EMA Val PSNR: {avg_val_psnr:.2f} dB")
 
             is_best = avg_val_psnr > best_psnr
             if is_best:
                 best_psnr = avg_val_psnr
                 save_checkpoint(current_epoch, is_best=True)
-                print(f"🏆 [存档] 发现最佳模型！已保存至 best_model.pth (PSNR: {best_psnr:.2f})")
+                print(f" [存档] 发现最佳模型！已保存至 best_model.pth (PSNR: {best_psnr:.2f})")
 
             if current_epoch % SAVE_FREQ == 0:
                 save_checkpoint(current_epoch)
-                print(f"💾 [存档] 已保存第 {current_epoch} 轮常规检查点。")
+                print(f" [存档] 已保存第 {current_epoch} 轮常规检查点。")
 
     except Exception as e:
-        print(f"\n❌ [Fatal Error] 训练中途发生严重错误: {e}")
-        print("🛑 正在尝试抢救模型权重...")
+        print(f"\n [Fatal Error] 训练中途发生严重错误: {e}")
+        print(" 正在尝试抢救模型权重...")
         save_checkpoint(max(1, current_epoch), is_emergency=True)
         raise e
 
     finally:
-        print("\n🧹 [Cleanup] 正在清理 Dataloader 线程，释放显存...")
+        print("\n [Cleanup] 正在清理 Dataloader 线程，释放显存...")
         del train_iter
         del train_loader
         del val_loader
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
-        print("✨ [Cleanup] 清理完成，安全退出。")
+        print(" [Cleanup] 清理完成，安全退出。")
 
 
 if __name__ == "__main__":
