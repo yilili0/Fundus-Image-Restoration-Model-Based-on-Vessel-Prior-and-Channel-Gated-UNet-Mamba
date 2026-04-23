@@ -1,28 +1,3 @@
-# losses/fundus_composite_loss_teacher_adapted.py
-# Composite loss for Fundus Restoration with VesselSeg teacher (your uploaded UNet).
-#
-# Key properties:
-# - Input/GT/pred expected in [0,1] for loss + teacher (matches your predict_one preprocess).
-# - Teacher outputs logits (matches your model.py).
-# - HARD POINT #1 satisfied: pred branch teacher forward is NOT under torch.no_grad(),
-#   so feature matching gradients flow back to student output.
-# - HARD POINT #2 satisfied: robust teacher builder handles both build_unet() and
-#   build_unet(in_channels=..., out_channels=...) signatures.
-#
-# Components:
-#   L_total = w_charb * Charbonnier
-#           + w_msssim * (1 - MS-SSIM)
-#           + w_ffl * FocalFrequencyLoss (Hann window + band focus)
-#           + w_vessel * ramp(progress) * L_vessel
-#
-# Vessel teacher loss:
-#   L_vessel = (BCEWithLogits(logits_pred, sigmoid(logits_gt_detached)) masked by confidence)
-#            + Dice(sigmoid(logits_pred), sigmoid(logits_gt_detached)) masked by confidence
-#            + feat_factor(progress) * FeatureMatching(feats_pred, feats_gt_detached) masked
-#
-# Optional dependencies:
-#   - pytorch-msssim (recommended): pip install pytorch-msssim
-#   - kornia (fallback): pip install kornia
 
 from __future__ import annotations
 
