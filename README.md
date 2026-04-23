@@ -22,7 +22,7 @@
 │   ├── data_check/             # 数据获取策略测试与数据质量检查
 │   └── dataset.py              # 训练过程中的数据采样与获取方法
 │
-├── notebook_excat_project/     # 教师模型（Teacher Model）相关内容
+├── Teacher_model/              # 教师模型（Teacher Model）相关内容
 │   ├── model.py                # 教师模型定义
 │   ├── train.py                # 教师模型训练代码
 │   ├── train.yml               # 教师模型训练配置文件
