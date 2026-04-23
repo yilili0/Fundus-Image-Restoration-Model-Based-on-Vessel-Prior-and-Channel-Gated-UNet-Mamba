@@ -30,7 +30,7 @@
 │   ├── dataset.py              # 教师模型的数据增强与预处理
 │   ├── predict_one.py          # 单张图的血管分割推理
 │   ├── checkpoints             # 教师模型权重
-│   └── infer.py                # 批量推理、数值指标计算及 debug 残留文件 
+│   └── infer_*.py                # 批量推理、数值指标计算及 debug 残留文件 
 |   
 │
 ├── README.md   
