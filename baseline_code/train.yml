@@ -1,0 +1,83 @@
+seed: 1234
+work_dir: ./work_fundus_mamba
+
+cudnn_benchmark: true
+allow_tf32: true
+
+data:
+  data_root: /shared_data/users/yili/Hybrid-Mamba-UNet/data/Real_Fundus
+  patch_size: 256
+  augment: true
+  val_ratio: 0.1666667     # 20/120
+  val_seed: 2026
+  val_num_samples: 2000
+  val_batch_size: 8
+  val_steps: 250           # 可不写：默认 val_num_samples/val_batch_size
+
+model:
+  student:
+    model_py: /shared_data/users/yili/Hybrid-Mamba-UNet/baseline_code/models/model.py   # 你服务器里恢复网络已重命名的文件
+    class_name: MambaRealSR11                # 或者用 build_fn
+    kwargs:
+      scale: 1
+      dim: 48
+      inp_channels: 3
+      out_channels: 3
+      num_blocks: [6, 2, 2, 1]
+      num_refinement_blocks: 6
+
+  teacher:
+    enable: true
+    model_py: /shared_data/users/yili/Hybrid-Mamba-UNet/notebook_exact_project/model.py
+    ckpt: /shared_data/users/yili/Hybrid-Mamba-UNet/notebook_exact_project/files/checkpoint.pth
+    in_channels: 3
+    out_channels: 1
+
+loss:
+  assume_range: "0_1"
+  use_roi_mask_for_pixel: false
+  roi_black_thr_255: 10
+
+  weights:
+    w_charb: 1.0
+    w_msssim: 0.1
+    w_ffl: 0.05
+    w_vessel: 0.02
+
+  stages:
+    stage1_pct: 0.20
+    stage2_pct: 0.80
+    stage2_ramp: 0.10
+
+  vessel:
+    mask_gamma: 2.0
+    feature_layers: "e1.conv,e2.conv,e3.conv"
+    force_teacher_fp32: true
+    w_bce: 1.0
+    w_dice: 1.0
+    w_feat: 0.2
+
+optim:
+  lr: 2.0e-4
+  weight_decay: 0.0
+  warmup_epochs: 10
+  start_lr: 1.0e-6
+  min_lr: 1.0e-6
+  use_cosine: true
+
+train:
+  epochs: 100
+  steps_per_epoch: 1000
+  batch_size: 8
+  num_workers: 0
+
+  use_amp: true
+  amp_dtype: bf16
+  grad_clip: 0.5
+  ema_decay: 0.999
+
+  val_every: 1
+  log_every: 50
+  save_every_epoch: true
+  resume: "/shared_data/users/yili/Hybrid-Mamba-UNet/baseline_code/work_fundus_mamba/checkpoints/latest.pth"     # 也可不写，命令行 --resume 会覆盖
+  save_every_n: 1          # <--- 新增这一行，控制每 5 个 epoch 独立保存一次权重
