@@ -6,11 +6,8 @@ import pandas as pd
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
+
 '''
-以下是一段适合放在代码开头的说明，用于向其他使用者介绍这段代码的作用：
-
----
-
 ### 代码说明：眼底图像对齐质量检测工具
 
 本脚本用于检测眼底图像数据集中 `input`（退化图像）与 `gt`（真实标注图像）之间的对齐质量。通过相位相关性分析（Phase Correlation）计算图像间的全局位移，并评估对齐精度。
@@ -35,9 +32,6 @@ import matplotlib.pyplot as plt
 - `shift_norm <= 2 px`：表示基本像素级对齐。
 - `shift_norm > 5~10 px` 或 `peak` 偏低：可能存在未对齐、旋转、缩放或局部形变问题，需重点关注。
 
---- 
-
-将上述说明添加到代码文件顶部，可以帮助使用者快速了解脚本的功能和使用方法。
 '''
 
 
@@ -298,7 +292,7 @@ def main():
         out_path = os.path.join(VIS_DIR, f"{key}_dx{r['dx']:.2f}_dy{r['dy']:.2f}_peak{r['peak']:.4f}.png")
         save_vis_pair(in_img, gt_img, r["dx"], r["dy"], r["peak"], out_path)
 
-    # 打印一个简要统计，帮你快速判断“整体是否对齐”
+ 
     print("\n=== Summary (OK pairs) ===")
     print(f"Pairs: {len(ok)}")
     print(f"Median shift_norm: {ok['shift_norm'].median():.3f} px")
