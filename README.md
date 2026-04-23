@@ -50,7 +50,6 @@
 | `infer.py`                       | 学生模型推理代码                                                                                 |
 | `requirement.txt`                | 学生模型运行环境依赖                                                                             |
 | `work_fundus_mamba/split`        | 训练集与验证集数据                                                                               |
-| `work_fundus_mamba/checkpoints/` | 训练过程中保存的模型权重                                                                         |
 
 ### data/
 
@@ -70,7 +69,6 @@
 | `dataset.py`           | 教师模型的数据增强与预处理          |
 | `predict_one.py`       | 单张图血管分割推理                  |
 | `infer_*.py`           | 批量推理、指标计算及 debug 残留文件 |
-| `files/checkpoint.pth` | 教师模型权重                        |
 
 ---
 
