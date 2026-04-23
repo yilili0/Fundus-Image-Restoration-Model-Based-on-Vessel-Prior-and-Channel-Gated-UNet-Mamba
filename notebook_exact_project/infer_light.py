@@ -181,7 +181,7 @@ def main(pred_dir: str, gt_dir: str, output_dir: str):
 
 
 if __name__ == "__main__":
-    # 按你的需求指定路径
+  
     PRED_DIR = "/shared_data/users/yili/Hybrid-Mamba-UNet/data/res/ArcNet/"
     GT_DIR = "/shared_data/users/yili/Hybrid-Mamba-UNet/data/Real_Fundus/gt/"
     OUTPUT_DIR = "/shared_data/users/yili/Hybrid-Mamba-UNet/data/res/ArcNet_overlay/"
