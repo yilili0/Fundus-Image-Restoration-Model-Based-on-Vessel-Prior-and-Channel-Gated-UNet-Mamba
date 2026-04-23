@@ -16,7 +16,7 @@ data:
 
 model:
   student:
-    model_py: /shared_data/users/yili/Hybrid-Mamba-UNet/baseline_code/models/model.py   # 你服务器里恢复网络已重命名的文件
+    model_py: /shared_data/users/yili/Hybrid-Mamba-UNet/baseline_code/models/model.py  
     class_name: MambaRealSR11                # 或者用 build_fn
     kwargs:
       scale: 1
