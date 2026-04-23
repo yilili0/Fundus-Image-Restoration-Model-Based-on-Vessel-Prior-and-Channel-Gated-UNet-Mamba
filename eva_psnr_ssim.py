@@ -12,12 +12,12 @@ from tqdm import tqdm
 cv2.setNumThreads(0)
 
 # =========================
-# 读取图像（强制安全）
+# 读取图像
 # =========================
 def read_image(path):   
     img = cv2.imread(path, cv2.IMREAD_COLOR)
     if img is None:
-        raise ValueError(f"❌ 无法读取图像: {path}")
+        raise ValueError(f" 无法读取图像: {path}")
 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -28,7 +28,7 @@ def read_image(path):
     return img
 
 # =========================
-# PSNR（float32安全版）
+# PSNR
 # =========================
 def calculate_psnr(img1, img2):
     img1 = img1.astype(np.float32)
@@ -41,7 +41,7 @@ def calculate_psnr(img1, img2):
     return 20 * np.log10(255.0 / np.sqrt(mse))
 
 # =========================
-# SSIM（完全稳定版）
+# SSIM
 # =========================
 def calculate_ssim(img1, img2):
     img1 = img1.astype(np.float32)
@@ -72,7 +72,7 @@ def calculate_ssim(img1, img2):
 # 主评估函数
 # =========================
 def evaluate(gt_dir, pred_dirs, save_csv="result.csv", crop_border=0):
-    print("🚀 开始评估（稳定版）")
+    print(" 开始评估")
     print(f"GT: {gt_dir}")
     print(f"Models: {list(pred_dirs.keys())}")
     print("-" * 50)
@@ -92,13 +92,13 @@ def evaluate(gt_dir, pred_dirs, save_csv="result.csv", crop_border=0):
             print(e)
             continue
 
-        print(f"\n📌 {name}")
+        print(f"\n {name}")
 
         for model_name, pred_dir in pred_dirs.items():
             pred_path = os.path.join(pred_dir, name)
 
             if not os.path.exists(pred_path):
-                print(f"⚠️ [{model_name}] 缺失")
+                print(f" [{model_name}] 缺失")
                 results[model_name]["psnr"].append(np.nan)
                 results[model_name]["ssim"].append(np.nan)
                 bad_cases.append((name, model_name, "missing"))
@@ -107,14 +107,14 @@ def evaluate(gt_dir, pred_dirs, save_csv="result.csv", crop_border=0):
             try:
                 pred_img = read_image(pred_path)
             except Exception as e:
-                print(f"⚠️ [{model_name}] 读取失败")
+                print(f" [{model_name}] 读取失败")
                 results[model_name]["psnr"].append(np.nan)
                 results[model_name]["ssim"].append(np.nan)
                 bad_cases.append((name, model_name, "read_error"))
                 continue
 
             if gt_img.shape != pred_img.shape:
-                print(f"⚠️ [{model_name}] 尺寸不一致")
+                print(f" [{model_name}] 尺寸不一致")
                 results[model_name]["psnr"].append(np.nan)
                 results[model_name]["ssim"].append(np.nan)
                 bad_cases.append((name, model_name, "shape_mismatch"))
@@ -132,7 +132,7 @@ def evaluate(gt_dir, pred_dirs, save_csv="result.csv", crop_border=0):
                 psnr = calculate_psnr(gt_eval, pred_eval)
                 ssim = calculate_ssim(gt_eval, pred_eval)
             except Exception as e:
-                print(f"🚨 [{model_name}] 计算失败")
+                print(f" [{model_name}] 计算失败")
                 psnr, ssim = np.nan, np.nan
 
             results[model_name]["psnr"].append(psnr)
@@ -140,7 +140,7 @@ def evaluate(gt_dir, pred_dirs, save_csv="result.csv", crop_border=0):
 
             print(f"   [{model_name}] PSNR: {psnr:.3f} | SSIM: {ssim:.4f}")
 
-            # 🔥 释放内存（关键）
+            #  释放内存（关键）
             del pred_img, pred_eval
 
         del gt_img, gt_eval
@@ -149,7 +149,7 @@ def evaluate(gt_dir, pred_dirs, save_csv="result.csv", crop_border=0):
     # 汇总
     # =========================
     print("\n" + "=" * 50)
-    print("📊 最终结果")
+    print(" 最终结果")
     print("=" * 50)
 
     final = []
@@ -164,7 +164,7 @@ def evaluate(gt_dir, pred_dirs, save_csv="result.csv", crop_border=0):
         avg_ssim = np.nanmean(ssim_arr)
         std_ssim = np.nanstd(ssim_arr)
 
-        print(f"\n🏆 {model_name}")
+        print(f"\n {model_name}")
         print(f" PSNR: {avg_psnr:.4f} ± {std_psnr:.4f}")
         print(f" SSIM: {avg_ssim:.4f} ± {std_ssim:.4f}")
 
@@ -176,10 +176,10 @@ def evaluate(gt_dir, pred_dirs, save_csv="result.csv", crop_border=0):
         writer.writerow(["Model", "PSNR_mean", "PSNR_std", "SSIM_mean", "SSIM_std"])
         writer.writerows(final)
 
-    print(f"\n💾 保存到 {save_csv}")
+    print(f"\n 保存到 {save_csv}")
 
-    print(f"\n⚠️ 异常样本数: {len(bad_cases)}")
-    print("✅ 完成（稳定运行）")
+    print(f"\n 异常样本数: {len(bad_cases)}")
+    print(" 完成（稳定运行）")
 
 # =========================
 # 入口
