@@ -1,11 +1,11 @@
 import os
-# 【新增】限制只对 GPU 1 可见。必须放在 import torch 之前！
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 # 严格限制底层计算库的线程数，防止 CPU 爆炸
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
-os.environ["cv2_NUM_THREADS"] = "0"  # 如果代
+os.environ["cv2_NUM_THREADS"] = "0"  
 import os
 import torch
 import torch.nn.functional as F
@@ -14,7 +14,7 @@ from PIL import Image
 from torchvision.transforms import ToTensor, ToPILImage
 from tqdm import tqdm
 
-# 导入你写好的模型
+
 from models.model import MambaRealSR11
 
 
@@ -91,7 +91,7 @@ def main():
     OVERLAP = 64  # 重叠区域大小，建议设置在 32~128 之间，越大越平滑但推理越慢
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"🚀 [Infer] 推理任务启动，使用设备: {device}")
+    print(f" [Infer] 推理任务启动，使用设备: {device}")
 
     # -----------------------------
     # 2. 加载模型与权重
@@ -99,7 +99,7 @@ def main():
     model = MambaRealSR11(scale=1, dim=48).to(device)
 
     if os.path.isfile(CKPT_PATH):
-        print(f"📦 [Infer] 正在加载权重: {CKPT_PATH}")
+        print(f" [Infer] 正在加载权重: {CKPT_PATH}")
         checkpoint = torch.load(CKPT_PATH, map_location=device)
 
         # 优先使用 EMA 权重，因为在训练代码中 EMA 的平滑历史表现通常更好
@@ -117,7 +117,7 @@ def main():
     # -----------------------------
     # 3. 图像读取与预处理
     # -----------------------------
-    print(f"🖼️  [Infer] 正在读取图像: {INPUT_IMAGE_PATH}")
+    print(f" [Infer] 正在读取图像: {INPUT_IMAGE_PATH}")
     img = Image.open(INPUT_IMAGE_PATH).convert('RGB')
 
     # 转换为 Tensor，形状变为 [1, 3, H, W]，值域 [0, 1]
@@ -143,7 +143,7 @@ def main():
     # 移除 Batch 维度，转换回 PIL Image
     output_img = ToPILImage()(output_tensor.squeeze(0).cpu())
     output_img.save(OUTPUT_IMAGE_PATH)
-    print(f"💾 [Infer] 推理完成！结果已保存至: {OUTPUT_IMAGE_PATH}")
+    print(f" [Infer] 推理完成！结果已保存至: {OUTPUT_IMAGE_PATH}")
 
 
 if __name__ == "__main__":
