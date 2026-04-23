@@ -1,22 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
-"""
-Sanity tests for fundus image restoration model (scale=1).
-
-Includes:
-  1) Shape + residual magnitude check
-  2) Gradient flow / NaN-Inf grad check
-  3) Peak GPU memory test (single size + optional size sweep)
-  3c) Peak GPU memory batch sweep (fixed size)
-  4) Hallucinated texture tendency test using simple synthetic inputs
-
-Outputs:
-  - Console logs
-  - Optional CSV log (recommended for experiment tracking)
-
-Assumes `model.py` is importable and defines `MambaRealSR11`.
-"""
 
 import os
 import argparse
@@ -398,7 +380,7 @@ def parse_args():
 
     args = p.parse_args()
 
-    # 如果用户显式传了 --no_run_all_256，就关闭默认全套
+    
     if getattr(args, "no_run_all_256", False):
         args.run_all_256 = False
 
