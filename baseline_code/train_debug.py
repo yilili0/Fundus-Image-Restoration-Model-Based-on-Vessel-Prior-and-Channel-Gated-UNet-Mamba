@@ -1,38 +1,4 @@
 
-# -*- coding: utf-8 -*-
-"""
-train_debug.py (对齐 train.py 的 NaN/Inf 短扫 + 定点复现版)
-============================================================
-
-你刚才跑到：
-  [done] no non-finite found within max_steps.
-这通常说明：在“当前 checkpoint 的 global_step 起点”往后 400 step 内没触发 NaN/Inf。
-但你 log.jsonl 显示：
-- 第一次 NaN 出现在 global_step=32050（epoch 31 step 49）
-- 永久 NaN 从 global_step=34200（epoch 33 step 199）开始
-
-所以如果你 resume 的 global_step 比 32050 小很多（例如 ep30 常见在 ~30000），
-max_steps=400 根本还没跑到 32050，自然抓不到。
-
-本脚本在“严格复用 train.py 构建方式”的前提下，新增两个调试能力：
-1) --target_gs: 直接跑到某个 global_step（比如 32050/34200），便于精准复现
-2) --val_every: 按 train.yml 的 val_fixed_samples 做快速 val（可选用 EMA），因为你日志里 val 可能更早暴露 NaN
-
-推荐用法：
-A) 精准复现第一次 NaN（如果你从 ep30 恢复）：
-   python train_debug.py --config train.yml --resume /path/to/ep30.pth --target_gs 32100 --max_steps 4000
-
-B) 精准复现永久 NaN 起点：
-   python train_debug.py --config train.yml --resume /path/to/ep30.pth --target_gs 34250 --max_steps 6000
-
-C) 同时监控 val（每 200 step 跑 2 个 val batch）：
-   python train_debug.py --config train.yml --resume /path/to/ep30.pth --target_gs 34250 --val_every 200 --val_batches 2
-
-D) 判断是否 AMP 数值不稳：
-   python train_debug.py --config train.yml --resume /path/to/ep30.pth --target_gs 34250 --amp 0
-   python train_debug.py --config train.yml --resume /path/to/ep30.pth --target_gs 34250 --amp 1 --amp_dtype bf16
-"""
-
 import os
 import math
 import time
@@ -298,7 +264,7 @@ def forward_once(model: nn.Module, xin: torch.Tensor, amp: bool, amp_dtype: str)
 
 @torch.no_grad()
 def ema_update(ema_model: nn.Module, model: nn.Module, decay: float):
-    # in-place EMA update (对齐常见写法)
+    # in-place EMA update
     for ema_p, p in zip(ema_model.parameters(), model.parameters()):
         ema_p.data.mul_(decay).add_(p.data, alpha=(1.0 - decay))
 
