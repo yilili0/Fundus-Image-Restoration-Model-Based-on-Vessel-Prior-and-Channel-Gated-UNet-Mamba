@@ -112,7 +112,7 @@
 
 ## 📦 补充资源
 
-以下文件/目录包含模型权重、测试数据、推理前后对比结果及测试视频等，因文件较大，已通过 `.gitignore` 排除，可按需单独获取：
+以下文件/目录包含模型权重、测试数据，因文件较大，已通过 `.gitignore` 排除，可按需单独获取：
 
 - **checkpoints/** — 模型权重文件
   权重文件 链接: https://pan.baidu.com/s/1owVsA6XimBDFFoDPMr0ZkQ?pwd=bi88 提取码: bi88
